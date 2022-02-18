@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="fe8890fe8318486896b254bd65d2d6ee" Name="Diagram1">
+        <EntityTypeShape EntityType="cloth_bazarDBModel.Category" Width="1.5" PointX="0.75" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="cloth_bazarDBModel.Configuration" Width="1.5" PointX="7.125" PointY="1.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="cloth_bazarDBModel.Product" Width="1.5" PointX="3" PointY="1" IsExpanded="true" />
+        <AssociationConnector Association="cloth_bazarDBModel.FK__Products__pro_fk__2B3F6F97" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="cloth_bazarDBModel.Order" Width="1.5" PointX="3" PointY="4" />
+        <EntityTypeShape EntityType="cloth_bazarDBModel.OrderItem" Width="1.5" PointX="5.25" PointY="1.25" />
+        <EntityTypeShape EntityType="cloth_bazarDBModel.User" Width="1.5" PointX="0.875" PointY="3.875" />
+        <AssociationConnector Association="cloth_bazarDBModel.FK__Order__o_fk_user__31EC6D26" />
+        <AssociationConnector Association="cloth_bazarDBModel.FK__OrderItem__oi_fk__34C8D9D1" />
+        <AssociationConnector Association="cloth_bazarDBModel.FK__OrderItem__oi_fk__35BCFE0A" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

@@ -1,0 +1,135 @@
+﻿@model Product
+
+<!-- Page title -->
+<div class="page-title parallax parallax1">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="page-title-heading">
+                    <h1 class="title">@Model.pro_name</h1>
+                </div><!-- /.page-title-heading -->
+            </div><!-- /.col-md-12 -->
+        </div><!-- /.row -->
+    </div><!-- /.container -->
+</div><!-- /.page-title -->
+
+<section class="flat-row main-shop shop-detail">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="wrap-flexslider">
+                    <div class="inner">
+                        <div class="flexslider style-1 has-relative">
+                            <ul class="slides">
+                                <li data-thumb="images/shop/sh-detail/thumb-detail-01.jpg" style="width: 570px; margin-right: 0px; float: left; display: block;" class="flex-active-slide" data-thumb-alt="">
+                                    <img src="@Model.pro_image" alt="Image" draggable="false">
+                                </li>
+                            </ul>
+                        </div><!-- /.flexslider -->
+                    </div>
+                </div>
+            </div><!-- /.col-md-6 -->
+
+            <div class="col-md-6">
+                <div class="product-detail">
+                    <div class="inner">
+                        <div class="content-detail">
+                            <h2 class="product-title mb-0">@Model.pro_name</h2>
+                            <br />
+                            <h4>
+                                @Model.pro_description
+                            </h4>
+                            <div class="price">
+                                <ins><span class="amount">Rs @Model.pro_price</span></ins>
+                            </div>
+                            
+                            <div class="product-quantity">
+                                <div class="quantity">
+                                    <input type="text" value="1" name="quantity-number" class="quantity-number">
+                                    <span class="inc quantity-button">+</span>
+                                    <span class="dec quantity-button">-</span>
+                                </div>
+                                <div class="add-to-cart">
+                                    <a class="addtoCart" data-id="@Model.pro_id">ADD TO CART</a>
+                                </div>
+                                <div class="box-like">
+                                    <a href="#" class="like"><i class="fa fa-heart-o"></i></a>
+                                </div>
+                            </div>
+                            <div class="product-categories">
+                                <span>Categories: @ViewBag.category.cat_name</span> 
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div><!-- /.product-detail -->
+            </div>
+        </div><!-- /.row -->
+    </div><!-- /.container -->
+</section><!-- /.flat-row -->
+
+
+<section class="flat-row shop-related">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="title-section margin-bottom-55">
+                    <h2 class="title">Related Products</h2>
+                </div>
+
+                <div class="product-content product-fourcolumn clearfix">
+                    <ul class="product style2">
+                        @foreach (var relatedProducts in ViewBag.relatedProducts)
+                        {
+                            <li class="product-item">
+                                <div class="product-thumb clearfix">
+                                    <a href="#">
+                                        <img src="@relatedProducts.pro_image" style="height:250px;" alt="image">
+                                    </a>
+                                </div>
+                                <div class="product-info clearfix">
+                                    <span class="product-title">@relatedProducts.pro_name</span>
+                                    <div class="price">
+                                        <ins>
+                                            <span class="amount">Rs @relatedProducts.pro_price</span>
+                                        </ins>
+                                    </div>
+                                </div>
+                                <div class="add-to-cart text-center">
+                                    <a href="@Url.Action("SingleProduct","Product",new { id = relatedProducts.pro_id })" >Details</a>
+                                </div>
+                                <a href="#" class="like"><i class="fa fa-heart-o"></i></a>
+                            </li>
+                        }
+                    </ul><!-- /.product -->
+                </div><!-- /.product-content -->
+            </div>
+        </div><!-- /.row -->
+    </div>
+</section>
+
+<script>
+    var products;
+
+    $(".addtoCart").click(function () {
+
+        var productsID = $(this).attr("data-id");
+
+        var existingProducts = $.cookie('CartProducts');
+
+        if (existingProducts != null && existingProducts != "" && existingProducts != undefined) {
+            products = existingProducts.split('-');
+        }
+        else {
+            products = [];
+        }
+
+        products.push(productsID);
+
+        $.cookie('CartProducts', products.join('-'), { path: '/' });
+
+        UpdateCartProductCount();
+
+        alert("Product added to Cart.");
+    });
+</script>

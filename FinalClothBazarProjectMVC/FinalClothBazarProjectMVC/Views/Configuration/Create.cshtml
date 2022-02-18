@@ -1,0 +1,89 @@
+﻿@model Configuration
+
+    @{
+        ViewBag.Title = "Create Configurations";
+    }
+    <br />
+    <h2>Create Configurations</h2>
+
+    <form id="CreateForm" method="post">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="form-group">
+                    <label>Key</label>
+                    <input class="form-control" name="key" />
+                </div>
+                <div class="form-group">
+                    <label>Value</label>
+                    <input class="form-control" name="value" />
+                </div>
+            </div>
+        </div>
+        <button class="btn btn-primary" id="saveBtn" type="button">Save</button>
+        <button class="btn btn-primary" id="cancelBtn" type="button">Cancel</button>
+
+    </form>
+
+
+    <script>
+        $('#CreateForm').validate({
+            rules: {
+                key: {
+                    required: true,
+                    maxlength: 50,
+                },
+                value: {
+                    required: true,
+                },
+            },
+            messages: {
+
+                key: {
+                    required: 'key is required',
+                    maxlength: 'Maximum Length is 50'
+                },
+                value: {
+                    required: 'value is required',
+                    maxlength: 'Maximum Length is 500'
+                },
+            }
+        });
+        $("#saveBtn").click(function () {
+            if ($("#CreateForm").valid())
+            {
+
+        $.ajax({
+            type: "post",
+            url: '@Url.Action("Create", "Configuration")',
+            data: $("#CreateForm").serialize()
+        })
+            .done(function (response) {
+                $("#tableContainer").html(response);
+                $("#actionContainer").html("");
+
+                foucusAction("tableContainer");
+            })
+            .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                alert("FAIL");
+                    });
+
+            }
+            else {
+                foucusAction("actionContainer");
+            }
+    });
+
+    $("#cancelBtn").click(function () {
+        $.ajax({
+            url: '@Url.Action("ConfigurationTable", "Configuration")'
+        })
+            .done(function (response) {
+                $("#actionContainer").html("");
+
+                foucusAction("tableContainer");
+            })
+            .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                alert("FAIL");
+            });
+    });
+    </script>

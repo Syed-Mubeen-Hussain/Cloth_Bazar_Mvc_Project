@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="cloth_bazarDBModelStoreContainer" CdmEntityContainer="cloth_bazarDBEntities1">
+    <EntitySetMapping Name="Categories">
+      <EntityTypeMapping TypeName="cloth_bazarDBModel.Category">
+        <MappingFragment StoreEntitySet="Categories">
+          <ScalarProperty Name="cat_id" ColumnName="cat_id" />
+          <ScalarProperty Name="cat_name" ColumnName="cat_name" />
+          <ScalarProperty Name="cat_description" ColumnName="cat_description" />
+          <ScalarProperty Name="cat_image" ColumnName="cat_image" />
+          <ScalarProperty Name="cat_isFeatured" ColumnName="cat_isFeatured" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Configurations">
+      <EntityTypeMapping TypeName="cloth_bazarDBModel.Configuration">
+        <MappingFragment StoreEntitySet="Configurations">
+          <ScalarProperty Name="key" ColumnName="key" />
+          <ScalarProperty Name="value" ColumnName="value" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Products">
+      <EntityTypeMapping TypeName="cloth_bazarDBModel.Product">
+        <MappingFragment StoreEntitySet="Products">
+          <ScalarProperty Name="pro_id" ColumnName="pro_id" />
+          <ScalarProperty Name="pro_name" ColumnName="pro_name" />
+          <ScalarProperty Name="pro_price" ColumnName="pro_price" />
+          <ScalarProperty Name="pro_description" ColumnName="pro_description" />
+          <ScalarProperty Name="pro_image" ColumnName="pro_image" />
+          <ScalarProperty Name="pro_fk_cat" ColumnName="pro_fk_cat" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Orders">
+      <EntityTypeMapping TypeName="cloth_bazarDBModel.Order">
+        <MappingFragment StoreEntitySet="Order">
+          <ScalarProperty Name="o_totalAmount" ColumnName="o_totalAmount" />
+          <ScalarProperty Name="o_status" ColumnName="o_status" />
+          <ScalarProperty Name="o_ordered_At" ColumnName="o_ordered_At" />
+          <ScalarProperty Name="o_fk_user" ColumnName="o_fk_user" />
+          <ScalarProperty Name="o_id" ColumnName="o_id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="OrderItems">
+      <EntityTypeMapping TypeName="cloth_bazarDBModel.OrderItem">
+        <MappingFragment StoreEntitySet="OrderItem">
+          <ScalarProperty Name="oi_fk_pro" ColumnName="oi_fk_pro" />
+          <ScalarProperty Name="oi_quantity" ColumnName="oi_quantity" />
+          <ScalarProperty Name="oi_fk_o_id" ColumnName="oi_fk_o_id" />
+          <ScalarProperty Name="oi_id" ColumnName="oi_id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Users">
+      <EntityTypeMapping TypeName="cloth_bazarDBModel.User">
+        <MappingFragment StoreEntitySet="User">
+          <ScalarProperty Name="u_password" ColumnName="u_password" />
+          <ScalarProperty Name="u_username" ColumnName="u_username" />
+          <ScalarProperty Name="u_email" ColumnName="u_email" />
+          <ScalarProperty Name="u_image" ColumnName="u_image" />
+          <ScalarProperty Name="u_gender" ColumnName="u_gender" />
+          <ScalarProperty Name="u_lastname" ColumnName="u_lastname" />
+          <ScalarProperty Name="u_firstname" ColumnName="u_firstname" />
+          <ScalarProperty Name="u_id" ColumnName="u_id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping>

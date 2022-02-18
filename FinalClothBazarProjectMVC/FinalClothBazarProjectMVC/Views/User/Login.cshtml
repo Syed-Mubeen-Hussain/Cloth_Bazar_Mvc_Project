@@ -1,0 +1,49 @@
+﻿@model User
+
+@if (ViewBag.error!=null)
+{
+<div class="alert alert-danger" role="alert">
+    @ViewBag.error
+</div>
+}
+
+<div class="container">
+    <div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="title-section">
+                    <h2 class="title">
+                        Login
+                    </h2>
+                </div><!-- /.title-section -->
+            </div><!-- /.col-md-12 -->
+        </div>
+        <section>
+
+            <div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <section id="loginForm">
+                            <form action="@Url.Action("Login","User")" method="post">
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Username</label>
+                                    <input type="text" name="u_username" class="form-control"  placeholder="Enter Username">
+                                </div>
+                                <div class="form-group">
+                                    <label>Password</label>
+                                    <input type="password" name="u_password" class="form-control" placeholder="Enter Password">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Login</button>
+                            </form>
+                        </section>
+                    </div>
+                </div>
+
+            </div>
+
+
+        </section>
+    </div>
+</div>

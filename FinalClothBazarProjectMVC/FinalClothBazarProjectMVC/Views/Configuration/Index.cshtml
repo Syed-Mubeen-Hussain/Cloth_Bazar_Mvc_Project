@@ -1,0 +1,20 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+<div class="container">
+    <div id="tableContainer">
+        @{
+            Html.RenderAction("ConfigurationTable");
+        }
+    </div>
+    <div id="actionContainer"></div>
+</div>
+<script>
+    function foucusAction(contentToAction) {
+        $('html, body').animate({
+            scrollTop: $("#"+contentToAction).offset().top - 100
+        }, 500);
+    }
+</script>

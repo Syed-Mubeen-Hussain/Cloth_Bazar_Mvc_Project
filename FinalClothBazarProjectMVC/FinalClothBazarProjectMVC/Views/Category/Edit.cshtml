@@ -1,0 +1,151 @@
+﻿@model Category
+
+@{
+    ViewBag.Title = "Edit Category";
+
+    var trueChecked = Model.cat_isFeatured ? "checked" : string.Empty;
+    var falseChecked = !Model.cat_isFeatured ? "checked" : string.Empty;
+
+    var imgURL = string.IsNullOrEmpty(Model.cat_image) ? "/Content/images/87d4b9ea-653b-458d-a6f9-68ac6c2f33d5.png" : Model.cat_image;
+}
+<br />
+<h2>Edit Category</h2>
+
+<form id="formData" method="post">
+    <input name="cat_id" type="hidden" value="@Model.cat_id" />
+    <div class="row">
+        <div class="col-md-8">
+            <div class="form-group">
+                <label>Name</label>
+                <input class="form-control" name="cat_name" value="@Model.cat_name" />
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <input class="form-control" name="cat_description" value="@Model.cat_description" />
+            </div>
+            <div class="form-group">
+                <label>Is Featured?</label>
+                <div class="input-group">
+                    <div class="radio form-control">
+                        <label><input type="radio" name="cat_isFeatured" value="True" @trueChecked /> True</label>
+                    </div>
+                    <div class="radio form-control">
+                        <label><input type="radio" name="cat_isFeatured" value="False" @falseChecked /> False</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Image</label>
+                <div class="form-control">
+                    <input type="hidden" id="ImageURL" name="cat_image" />
+                    <input id="imageUpload" name="Image" type="file" accept=".png, .jpg" />
+                </div>
+            </div>
+
+            <button type="button" id="editBtn" class="btn btn-primary">Update</button>
+            <button type="button" id="cancelBtn" class="btn btn-primary">Cancel</button>
+        </div>
+        <div class="col-md-4">
+            <div class="thumb">
+                <img src="@imgURL" class="img-thumbnail img-fluid" alt="Category Image" id="categoryImage" />
+            </div>
+        </div>
+    </div>
+
+
+</form>
+
+<script>
+    $("#imageUpload").change(function () {
+        var element = this;
+
+        var formData = new FormData();
+
+        var totalFiles = element.files.length;
+
+        for (var i = 0; i < totalFiles; i++) {
+            var file = element.files[i];
+            formData.append("Photo", file);
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("UploadImage", "Shared")',
+            dataType: 'json',
+            data: formData,
+            contentType: false,
+            processData: false
+        })
+            .done(function (response) {
+                console.log(response);
+
+                if (response.Success) {
+                    $("#ImageURL").val(response.ImageURL);
+                    $("#categoryImage").attr("src", response.ImageURL);
+                }
+            })
+            .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                alert("FAIL");
+            });
+    });
+    $('#formData').validate({
+        rules: {
+            cat_name: {
+                required: true,
+                maxlength: 50,
+            },
+            cat_description: {
+                required: true,
+                maxlength: 500
+            },
+        },
+        messages: {
+
+            cat_name: {
+                required: 'Name is required',
+                maxlength: 'Maximum Length is 50'
+            },
+            cat_description: {
+                required: 'Description is required',
+                maxlength: 'Maximum Length is 500'
+            },
+        }
+    });
+    $("#editBtn").click(function () {
+        if ($("#formData").valid()) {
+
+         $.ajax({
+            type: "post",
+            url: '@Url.Action("Edit", "Category")',
+             data: $("#formData").serialize()
+        })
+            .done(function (response) {
+                $("#tableContainer").html(response);
+                $("#actionContainer").html("");
+
+                foucusAction("tableContainer");
+            })
+            .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                alert("FAIL");
+                });
+
+        }
+        else {
+            focusAction("actionContainer");
+        }
+    });
+    
+    $("#cancelBtn").click(function () {
+        $.ajax({
+            url: '@Url.Action("CategoryTable", "Category")'
+        })
+            .done(function (response) {
+                $("#actionContainer").html("");
+
+                foucusAction("tableContainer");
+            })
+            .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                alert("FAIL");
+            });
+    });
+</script>

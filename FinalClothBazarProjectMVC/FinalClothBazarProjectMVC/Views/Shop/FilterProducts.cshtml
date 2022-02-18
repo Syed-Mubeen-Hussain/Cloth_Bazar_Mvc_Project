@@ -1,0 +1,71 @@
+﻿@model FilterProductViewModel
+
+<div class="product-content product-threecolumn product-slidebar clearfix">
+    <ul class="product style2 sd1">
+        @foreach (var product in Model.Products)
+        {
+            <li class="product-item">
+                <div class="product-thumb clearfix">
+                    <a href="#">
+                        <img style="height:200px;" src="@product.pro_image" alt="image">
+                    </a>
+                </div>
+                <div class="product-info clearfix">
+                    <span class="product-title">@product.pro_name</span>
+                    <div class="price">
+                        <ins>
+                            <span class="amount">Rs @product.pro_price</span>
+                        </ins>
+                    </div>
+                </div>
+                <div class="add-to-cart text-center">
+                    <a href="@Url.Action("SingleProduct","Product",new { id = product.pro_id })">Details</a>
+                </div>
+                <a href="#" class="like"><i class="fa fa-heart-o"></i></a>
+            </li>
+        }
+    </ul><!-- /.product -->
+</div><!-- /.product-content -->
+<div class="product-pagination text-center clearfix">
+    <ul class="flat-pagination">
+        @if (Model.pager != null && Model.pager.TotalPages > 1)
+        {
+            if (Model.pager.CurrentPage > 1)
+            {
+                <li class="prev">
+                    <a href="#" data-href="@Url.Action("FilterProducts", "Shop", new { pageNo = Model.pager.CurrentPage - 1 ,sortBy = Model.sortBy,categoryID = Model.categoryID })" class="pageLink"><i class="fa fa-angle-left"></i></a>
+                </li>
+            }
+
+            for (int page = Model.pager.StartPage; page <= Model.pager.EndPage; page++)
+            {
+                <li class="@(Model.pager.CurrentPage == page ? "bg-info" : string.Empty)">
+                    <a href="#" data-href="@Url.Action("FilterProducts", "Shop", new { pageNo = page ,sortBy = Model.sortBy,categoryID = Model.categoryID })" class="pageLink">@page</a>
+                </li>
+            }
+
+            if (Model.pager.CurrentPage < Model.pager.EndPage)
+            {
+                <li>
+                    <a href="#" data-href="@Url.Action("FilterProducts", "Shop", new { pageNo = Model.pager.CurrentPage + 1 ,sortBy = Model.sortBy,categoryID = Model.categoryID })" class="pageLink"><i class="fa fa-angle-right"></i></a>
+                </li>
+            }
+
+        }
+    </ul><!-- /.flat-pagination -->
+</div>
+
+
+<input type="hidden" id="SearchTerm" value="@Model.SearchTerm" />
+<input type="hidden" id="SortBy" value="@Model.sortBy" />
+<input type="hidden" id="CategoryID" value="@Model.categoryID" />
+
+
+<script>
+    $(".pageLink").click(function () {
+        var url = $(this).attr("data-href");
+        if (url != "" || url != undefined) {
+            GetData(url);
+        }
+    });
+</script>

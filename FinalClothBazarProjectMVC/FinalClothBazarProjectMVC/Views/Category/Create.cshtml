@@ -1,0 +1,144 @@
+﻿
+@{
+    ViewBag.Title = "Create Category";
+}
+<br />
+<h2>Create Category</h2>
+
+<form id="CreateForm" method="post">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="form-group">
+                <label>Name</label>
+                <input class="form-control" name="cat_name" />
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <input class="form-control" name="cat_description" />
+            </div>
+            <div class="form-group">
+                <label>Is Featured?</label>
+                <div class="input-group">
+                    <div class="radio form-control">
+                        <label><input type="radio" name="cat_isFeatured" value="True" /> True</label>
+                    </div>
+                    <div class="radio form-control">
+                        <label><input type="radio" name="cat_isFeatured" value="False" /> False</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Image</label>
+                <div class="form-control">
+                    <input type="hidden" id="ImageURL" name="cat_image" />
+                    <input id="imageUpload" name="Image" type="file" accept=".png, .jpg" />
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="thumb">
+                <img class="img-thumbnail img-fluid" id="categoryImage" src="" />
+            </div>
+        </div>
+    </div>
+    <button class="btn btn-primary" id="saveBtn" type="button">Save</button>
+    <button class="btn btn-primary" id="cancelBtn" type="button">Cancel</button>
+
+</form>
+
+
+<script>
+    $("#imageUpload").change(function () {
+        var element = this;
+
+        var formData = new FormData();
+
+        var totalFiles = element.files.length;
+
+        for (var i = 0; i < totalFiles; i++) {
+            var file = element.files[i];
+            formData.append("Photo", file);
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("UploadImage", "Shared")',
+            dataType: 'json',
+            data: formData,
+            contentType: false,
+            processData: false
+        })
+            .done(function (response) {
+                console.log(response);
+
+                if (response.Success) {
+                    $("#ImageURL").val(response.ImageURL);
+                    $("#categoryImage").attr("src", response.ImageURL);
+                }
+            })
+            .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                alert("FAIL");
+            });
+    });
+
+    $('#CreateForm').validate({
+        rules: {
+            cat_name: {
+                required: true,
+                maxlength: 50,
+            },
+            cat_description: {
+                required: true,
+                maxlength: 500
+            },
+        },
+        messages: {
+
+            cat_name: {
+                required: 'Name is required',
+                maxlength: 'Maximum Length is 50'
+            },
+            cat_description: {
+                required: 'Description is required',
+                maxlength: 'Maximum Length is 500'
+            },
+        }
+    });
+
+    $("#saveBtn").click(function () {
+        if ($("#CreateForm").valid()) {
+             $.ajax({
+            type: "post",
+            url: '@Url.Action("Create", "Category")',
+            data: $("#CreateForm").serialize()
+        })
+            .done(function (response) {
+                $("#tableContainer").html(response);
+                $("#actionContainer").html("");
+
+                foucusAction("tableContainer");
+            })
+            .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                alert("FAIL");
+            });
+        }
+        else {
+
+            foucusAction("actionContainer");
+        }
+    });
+
+    $("#cancelBtn").click(function () {
+        $.ajax({
+            url: '@Url.Action("CategoryTable", "Category")'
+        })
+            .done(function (response) {
+                $("#actionContainer").html("");
+
+                foucusAction("tableContainer");
+            })
+            .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                alert("FAIL");
+            });
+    });
+    </script>

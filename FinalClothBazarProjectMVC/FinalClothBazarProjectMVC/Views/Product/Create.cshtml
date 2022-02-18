@@ -1,0 +1,162 @@
+﻿@model Product
+
+@{
+    ViewBag.Title = "Create Product";
+}
+<br />
+<h2>Create Product</h2>
+
+<form id="CreateForm" method="post">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="form-group">
+                <label>Category</label>
+                @Html.DropDownListFor(x => x.pro_fk_cat, ViewBag.categories as SelectList, new { @class = "form-control" })
+            </div>
+            <div class="form-group">
+                <label>Name</label>
+                <input class="form-control" name="pro_name" />
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <input class="form-control" name="pro_description" />
+            </div>
+            <div class="form-group">
+                <label>Price</label>
+                <input class="form-control" name="pro_price" />
+            </div>
+            <div class="form-group">
+                <label>Image</label>
+                <div class="form-control">
+                    <input type="hidden" id="ImageURL" name="pro_image" />
+                    <input id="imageUpload" name="Image" type="file" accept=".png, .jpg" />
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="thumb">
+                <img class="img-thumbnail img-fluid" id="productImage" src="" />
+            </div>
+        </div>
+    </div>
+    <button class="btn btn-primary" id="saveBtn" type="button">Save</button>
+    <button class="btn btn-primary" id="cancelBtn" type="button">Cancel</button>
+
+</form>
+
+
+<script>
+
+
+
+    $("#imageUpload").change(function () {
+        var element = this;
+
+        var formData = new FormData();
+
+        var totalFiles = element.files.length;
+
+        for (var i = 0; i < totalFiles; i++) {
+            var file = element.files[i];
+            formData.append("Photo", file);
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("UploadImage", "Shared")',
+            dataType: 'json',
+            data: formData,
+            contentType: false,
+            processData: false
+        })
+            .done(function (response) {
+                console.log(response);
+
+                if (response.Success) {
+                    $("#ImageURL").val(response.ImageURL);
+                    $("#productImage").attr("src", response.ImageURL);
+                }
+            })
+            .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                alert("FAIL");
+            });
+    });
+    $('#CreateForm').validate({
+        rules: {
+            pro_name: {
+                required: true,
+                minlength: 5,
+                maxlength: 50,
+            },
+            pro_description: {
+                required: true,
+                maxlength: 500
+            },
+            pro_price: {
+                required: true,
+                range: [1, 100000]
+            },
+            pro_fk_cat: {
+                required: true,
+            }
+        },
+        messages: {
+
+            pro_name: {
+                required: 'Name is required',
+                minlength: 'Minimum Length is 5',
+                maxlength: 'Maximum Length is 50'
+            },
+            pro_description: {
+                required: 'Description is required',
+                maxlength: 'Maximum Length is 500'
+            },
+            pro_price: {
+                required: 'Price is required',
+                maxlength: 'Price must be within range of 1 - 100000.'
+            },
+            pro_fk_cat: {
+                required: 'Category is required'
+            }
+        }
+    });
+
+    $("#saveBtn").click(function () {
+        if ($("#CreateForm").valid()) {
+        $.ajax({
+            type: "post",
+            url: '@Url.Action("Create", "Product")',
+            data: $("#CreateForm").serialize()
+        })
+            .done(function (response) {
+                $("#tableContainer").html(response);
+                $("#actionContainer").html("");
+
+                foucusAction("tableContainer");
+            })
+            .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                alert("FAIL");
+            });
+
+    }
+        else {
+
+            foucusAction("actionContainer");
+        }
+
+        });
+
+    $("#cancelBtn").click(function () {
+        $.ajax({
+            url: '@Url.Action("ProductTable", "Product")'
+        })
+            .done(function (response) {
+                $("#actionContainer").html("");
+
+                foucusAction("tableContainer");
+            })
+            .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                alert("FAIL");
+            });
+    });
+</script>

@@ -1,0 +1,229 @@
+﻿@model CategoryViewModel
+
+@{
+    /**/
+    ViewBag.Title = "Category Table";
+}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js" integrity="sha512-37T7leoNS06R80c8Ulq7cdCDU5MNQBwlYoy1TX/WUsLFC2eYNqtKlV0QjH7r8JpG/S0GUMZwebnVFLPd6SU5yg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<div class="row">
+    <div class="col-md-12">
+        <div class="title-section">
+            <h2 class="title">
+                Categories
+            </h2>
+        </div><!-- /.title-section -->
+    </div><!-- /.col-md-12 -->
+</div>
+<section>
+
+    <div>
+        <form method="post">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="form-group">
+                        <label>Search</label>
+                        <input class="form-control" id="searchTxt" name="Search" value="@Model.searchTerm" />
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Action</label>
+                        <div class="row">
+                            <div class="col-md-4 pr-0">
+                                <button type="button" id="searchBtn" class="btn btn-primary form-control">Search</button>
+                            </div>
+                            <div class="col-md-4 pr-0">
+                                <button type="button" id="resetBtn" class="btn btn-primary form-control">Reset</button>
+                            </div>
+                            <div class="col-md-4 pr-0">
+                                <button id="newBtn" class="form-control" type="button">New</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+    </div>
+
+    <div>
+        <table class="table table-striped text-center">
+            <thead>
+                <tr>
+                    <th class="font-weight-bold text-center">Name</th>
+                    <th class="font-weight-bold text-center">Description</th>
+                    <th class="font-weight-bold text-center">Is Featured</th>
+                    <th class="font-weight-bold text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Category.Count > 0)
+                {
+                    foreach (var category in Model.Category)
+                    {
+                        <tr>
+                            <td>@category.cat_name</td>
+                            <td>@category.cat_description</td>
+                            <td>@category.cat_isFeatured</td>
+                            <td>
+                                <button class="editBtn" data-id="@category.cat_id">Edit</button>
+                                <button class="deleteBtn" data-id="@category.cat_id">Delete</button>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td class="text-danger" colspan="5">No Category found.</td>
+                    </tr>
+                }
+
+
+            </tbody>
+        </table>
+
+        @if (Model.page != null && Model.page.TotalPages > 1)
+        {
+            if (Model.page.CurrentPage > 1)
+            {
+
+                <button class="page-buttons" data-pageNo="1">First</button>
+                <button class="page-buttons" data-pageNo="@(Model.page.CurrentPage - 1)">Previous</button>
+
+            }
+
+            for (int page = Model.page.StartPage; page <= Model.page.EndPage; page++)
+            {
+                <button class="page-buttons @(Model.page.CurrentPage == page ? "bg-info": string.Empty)" data-pageNo="@page">@page</button>
+            }
+
+            if (Model.page.CurrentPage < Model.page.EndPage)
+            {
+                <button class="page-buttons" data-pageNo="@(Model.page.CurrentPage + 1)">Next</button>
+                <button class="page-buttons" data-pageNo="@(Model.page.EndPage)">Last</button>
+            }
+        }
+    </div>
+
+
+</section>
+
+<script>
+    $(".page-buttons").click(function () {
+         $.ajax({
+             url: '@Url.Action("CategoryTable", "Category")',
+             data: {
+                 pageNo: $(this).attr("data-pageNo"),
+                 search: $("#searchTxt").val()
+             }
+        })
+            .done(function (response) {
+                $("#tableContainer").html(response);
+            })
+            .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                alert("FAIL");
+            });
+    });
+
+    $("#newBtn").click(function () {
+        $.ajax({
+            url: '@Url.Action("Create", "Category")',
+        })
+            .done(function (response) {
+                $("#actionContainer").html(response);
+
+                foucusAction("actionContainer");
+            })
+            .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                alert("FAIL");
+            });
+    });
+
+    $(".editBtn").click(function () {
+        debugger;
+        $.ajax({
+            url: '@Url.Action("Edit", "Category")',
+            data: {
+                Id : $(this).attr("data-id")
+            }
+        })
+            .done(function (response) {
+                $("#actionContainer").html(response);
+
+                foucusAction("actionContainer");
+            })
+            .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                alert("FAIL");
+            });
+    });
+
+    $(".deleteBtn").click(function () {
+        swal({
+            title: "Confirm",
+            text: "Are you sure you want to delete this category?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+            .then((willDelete) => {
+                if (willDelete) {
+                     $.ajax({
+            type : 'post',
+            url: '@Url.Action("Delete", "Category")',
+            data: {
+                Id: $(this).attr("data-id")
+            }
+            })
+                 .done(function (response) {
+                     $("#tableContainer").html(response);
+                     $("#actionContainer").html("");
+                 })
+                 .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                     alert("FAIL");
+                     });
+
+                    swal("Record has been deleted", {
+                        icon: "success",
+                    });
+                }
+            });
+
+            
+    });
+
+    $("#searchBtn").click(function () {
+        var searchTerm = $("#searchTxt").val();
+         $.ajax({
+            url: '@Url.Action("CategoryTable", "Category")',
+            data: {
+                search: searchTerm
+            }
+        })
+            .done(function (response) {
+                $("#tableContainer").html(response);
+                
+            })
+            .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                alert("FAIL");
+            });
+    });
+
+      $("#resetBtn").click(function () {
+        var searchTerm = '';
+         $.ajax({
+            url: '@Url.Action("CategoryTable", "Category")',
+            data: {
+                search: searchTerm
+            }
+        })
+            .done(function (response) {
+                $("#tableContainer").html(response);
+
+                foucusAction("tableContainer");
+            })
+            .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                alert("FAIL");
+            });
+    });
+</script>

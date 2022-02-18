@@ -1,0 +1,161 @@
+﻿@model Product
+
+@{
+    ViewBag.Title = "Edit Category";
+
+    var imgURL = string.IsNullOrEmpty(Model.pro_image) ? "/Content/images/87d4b9ea-653b-458d-a6f9-68ac6c2f33d5.png" : Model.pro_image;
+}
+<br />
+<h2>Edit Product</h2>
+
+<form id="formData" method="post">
+    <input name="pro_id" type="hidden" value="@Model.pro_id" />
+    <div class="row">
+        <div class="col-md-8">
+            <div class="form-group">
+                <label>Category</label>
+                @Html.DropDownListFor(x => x.pro_fk_cat, ViewBag.categories as SelectList, new { @class = "form-control" })
+            </div>
+            <div class="form-group">
+                <label>Name</label>
+                <input class="form-control" name="pro_name" value="@Model.pro_name" />
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <input class="form-control" name="pro_description" value="@Model.pro_description" />
+            </div>
+            <div class="form-group">
+                <label>Price</label>
+                <input class="form-control" name="pro_price" value="@Model.pro_price" />
+            </div>
+            <div class="form-group">
+                <label>Image</label>
+                <div class="form-control">
+                    <input type="hidden" id="ImageURL" name="pro_image" />
+                    <input id="imageUpload" name="Image" type="file" accept=".png, .jpg" />
+                </div>
+            </div>
+
+            <button type="button" id="editBtn" class="btn btn-primary">Update</button>
+            <button type="button" id="cancelBtn" class="btn btn-primary">Cancel</button>
+        </div>
+        <div class="col-md-4">
+            <div class="thumb">
+                <img src="@imgURL" class="img-thumbnail img-fluid" alt="Category Image" id="productImage" />
+            </div>
+        </div>
+    </div>
+
+
+</form>
+
+<script>
+    $("#imageUpload").change(function () {
+        var element = this;
+
+        var formData = new FormData();
+
+        var totalFiles = element.files.length;
+
+        for (var i = 0; i < totalFiles; i++) {
+            var file = element.files[i];
+            formData.append("Photo", file);
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("UploadImage", "Shared")',
+            dataType: 'json',
+            data: formData,
+            contentType: false,
+            processData: false
+        })
+            .done(function (response) {
+                console.log(response);
+
+                if (response.Success) {
+                    $("#ImageURL").val(response.ImageURL);
+                    $("#productImage").attr("src", response.ImageURL);
+                }
+            })
+            .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                alert("FAIL");
+            });
+    });
+
+    $('#formData').validate({
+        rules: {
+            pro_name: {
+                required: true,
+                minlength: 5,
+                maxlength: 50,
+            },
+            pro_description: {
+                required: true,
+                maxlength: 500
+            },
+            pro_price: {
+                required: true,
+                range: [1, 100000]
+            },
+            pro_fk_cat: {
+                required: true,
+            }
+        },
+        messages: {
+
+            pro_name: {
+                required: 'Name is required',
+                minlength: 'Minimum Length is 5',
+                maxlength: 'Maximum Length is 50'
+            },
+            pro_description: {
+                required: 'Description is required',
+                maxlength: 'Maximum Length is 500'
+            },
+            pro_price: {
+                required: 'Price is required',
+                maxlength: 'Price must be within range of 1 - 100000.'
+            },
+            pro_fk_cat: {
+                required: 'Category is required'
+            }
+        }
+    });
+
+    $("#editBtn").click(function () {
+        if ($("#formData").valid()) {
+                 $.ajax({
+            type: "post",
+            url: '@Url.Action("Edit", "Product")',
+             data: $("#formData").serialize()
+        })
+            .done(function (response) {
+                $("#tableContainer").html(response);
+                $("#actionContainer").html("");
+
+                foucusAction("tableContainer");
+            })
+            .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                alert("FAIL");
+            });
+        }
+        else {
+            foucusAction("actionContainer");
+        }
+    });
+
+    $("#cancelBtn").click(function () {
+        $.ajax({
+            url: '@Url.Action("ProductTable", "Product")'
+        })
+            .done(function (response) {
+                $("#actionContainer").html("");
+
+                foucusAction("tableContainer");
+            })
+            .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                alert("FAIL");
+            });
+    });
+</script>

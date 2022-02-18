@@ -1,0 +1,28 @@
+﻿@model List<Product>
+<div class="product-content product-fourcolumn clearfix">
+    <ul class="product style2 clearfix">
+        @foreach (var item in Model)
+        {
+            <li class="product-item">
+                <div class="product-thumb clearfix">
+                    <a href="#" class="product-thumb">
+                        <img  src="@item.pro_image" style="height:200px;" alt="image">
+                    </a>
+                </div>
+                <div class="product-info text-center clearfix">
+                    <span class="product-title">@item.pro_name</span>
+                    <div class="price">
+                        <ins>
+                            <span class="amount">$ @item.pro_price</span>
+                        </ins>
+                    </div>
+                </div>
+                <div class="add-to-cart text-center">
+                    <a href="@Url.Action("SingleProduct","Product",new { id = item.pro_id })">Details</a>
+                </div>
+                <a href="#" class="like"><i class="fa fa-heart-o"></i></a>
+            </li>
+        }
+    </ul>
+</div>
+
